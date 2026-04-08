@@ -119,7 +119,12 @@ TRANSLATIONS = {
 
 
 class DatabaseEditorTab(ctk.CTkFrame):
-    def __init__(self, parent, editor_service: DatabaseEditorService | None = None, database_editor_service: DatabaseEditorService | None = None):
+    def __init__(
+        self,
+        parent,
+        editor_service: DatabaseEditorService | None = None,
+        database_editor_service: DatabaseEditorService | None = None,
+    ):
         super().__init__(parent)
         self.editor_service = editor_service or database_editor_service or DatabaseEditorService()
 
@@ -221,15 +226,54 @@ class DatabaseEditorTab(ctk.CTkFrame):
 
     def _load_tables(self):
         tables = self.editor_service.get_table_names()
+        current_display = self.reverse_table_name_map.get(self.current_table, self.current_table) if self.current_table else None
+
         self.table_name_map = {self.tr_table(name): name for name in tables}
         self.reverse_table_name_map = {v: k for k, v in self.table_name_map.items()}
+
         display_values = list(self.table_name_map.keys()) or [""]
         self.table_combo.configure(values=display_values)
-        if tables:
-            first_table = tables[0]
-            self.current_table = first_table
-            self.table_combo.set(self.reverse_table_name_map.get(first_table, first_table))
+
+        if self.current_table and self.current_table in self.reverse_table_name_map:
+            self.table_combo.set(self.reverse_table_name_map[self.current_table])
+        elif current_display and current_display in display_values:
+            self.table_combo.set(current_display)
+        elif tables:
+            self.current_table = tables[0]
+            self.table_combo.set(self.reverse_table_name_map.get(self.current_table, self.current_table))
             self.refresh()
+
+    def update_ui_texts(self):
+        self.table_label.configure(text=self.tr("table"))
+        self.search_label.configure(text=self.tr("search"))
+        self.search_entry.configure(placeholder_text=self.tr("search_placeholder"))
+
+        self.refresh_btn.configure(text=self.tr("refresh"))
+        self.edit_btn.configure(text=self.tr("edit_cell"))
+        self.delete_btn.configure(text=self.tr("delete"))
+        self.new_row_btn.configure(text=self.tr("new_row"))
+        self.export_btn.configure(text=self.tr("export_excel"))
+        self.import_btn.configure(text=self.tr("bulk_import"))
+        self.template_btn.configure(text=self.tr("excel_template"))
+
+        self._load_tables()
+
+        if self.current_table:
+            self.table_title.configure(text=self.tr("editor_title_with_table", table=self.tr_table(self.current_table)))
+            self.info_label.configure(
+                text=self.tr(
+                    "table_info",
+                    table=self.tr_table(self.current_table),
+                    rows=len(self.rows_cache),
+                    cols=len(self.columns_meta),
+                )
+            )
+        else:
+            self.table_title.configure(text=self.tr("editor_title"))
+            self.info_label.configure(text=self.tr("choose_table_hint"))
+
+        if self.columns_meta:
+            self._rebuild_tree()
 
     def on_table_change(self, selected_value: str):
         self.current_table = self.table_name_map.get(selected_value, selected_value)

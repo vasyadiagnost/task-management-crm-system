@@ -4,6 +4,15 @@ from datetime import date, timedelta
 
 from ui.statuses import STATUS_OVERDUE, STATUS_TODAY, STATUS_7_DAYS, normalize_language
 
+from services.person_service import PersonService
+from services.interaction_service import InteractionService
+from services.task_service import TaskService
+
+try:
+    from services.meeting_service import MeetingService
+except Exception:
+    MeetingService = None
+
 
 TRANSLATIONS = {
     "ru": {
@@ -62,15 +71,6 @@ TYPE_TRANSLATIONS = {
     "ru": {"Звонок": "Звонок", "Встреча": "Встреча"},
     "en": {"Звонок": "Call", "Встреча": "Meeting"},
 }
-
-from services.person_service import PersonService
-from services.interaction_service import InteractionService
-from services.task_service import TaskService
-
-try:
-    from services.meeting_service import MeetingService
-except Exception:
-    MeetingService = None
 
 
 class DashboardTab(ctk.CTkFrame):
@@ -139,9 +139,8 @@ class DashboardTab(ctk.CTkFrame):
         )
         self.subtitle_label.pack(side="left", padx=(0, 10), pady=14)
 
-        ctk.CTkButton(self.top_frame, text=self.tr("refresh"), width=150, command=self.refresh).pack(
-            side="right", padx=12, pady=12
-        )
+        self.refresh_button = ctk.CTkButton(self.top_frame, text=self.tr("refresh"), width=150, command=self.refresh)
+        self.refresh_button.pack(side="right", padx=12, pady=12)
 
         self.hint_label = ctk.CTkLabel(
             self,
@@ -241,7 +240,41 @@ class DashboardTab(ctk.CTkFrame):
         scrollbar.pack(side="right", fill="y")
         tree.configure(yscrollcommand=scrollbar.set)
 
-        return {"frame": frame, "tree": tree}
+        return {"frame": frame, "title_label": title_label, "tree": tree}
+
+    def update_ui_texts(self):
+        self.title_label.configure(text=self.tr("title"))
+        self.subtitle_label.configure(text=self.tr("subtitle"))
+        self.hint_label.configure(text=self.tr("hint"))
+        self.refresh_button.configure(text=self.tr("refresh"))
+
+        self.counter_contacts_overdue["title"].configure(text=self.tr("contacts_overdue"))
+        self.counter_contacts_today["title"].configure(text=self.tr("contacts_today"))
+        self.counter_tasks_overdue["title"].configure(text=self.tr("tasks_overdue"))
+        self.counter_meetings["title"].configure(text=self.tr("meetings_soon"))
+        self.counter_birthdays["title"].configure(text=self.tr("birthdays_today"))
+
+        self.card_contacts_overdue["title_label"].configure(text=self.tr("card_overdue_contacts"))
+        self.card_contacts_today["title_label"].configure(text=self.tr("card_today_contacts"))
+        self.card_tasks_focus["title_label"].configure(text=self.tr("card_tasks_focus"))
+        self.card_meetings["title_label"].configure(text=self.tr("card_meetings"))
+        self.card_birthdays["title_label"].configure(text=self.tr("card_birthdays"))
+        self.card_contacts_week["title_label"].configure(text=self.tr("card_week_contacts"))
+
+        for card in (
+            self.card_contacts_overdue,
+            self.card_contacts_today,
+            self.card_tasks_focus,
+            self.card_meetings,
+            self.card_birthdays,
+            self.card_contacts_week,
+        ):
+            tree = card["tree"]
+            tree.heading("main", text=self.tr("col_object"))
+            tree.heading("date", text=self.tr("col_date"))
+            tree.heading("extra", text=self.tr("col_details"))
+
+        self.refresh()
 
     def _open_tab(self, tab_key: str):
         root = self.winfo_toplevel()
