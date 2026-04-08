@@ -27,6 +27,28 @@ The system combines:
 - SQLite database
 - Desktop UI based on tkinter / customtkinter
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="45%"/>
+  <img src="docs/screenshots/people.png" width="45%"/>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/interactions.png" width="45%"/>
+  <img src="docs/screenshots/tasks.png" width="45%"/>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/reminders.png" width="45%"/>
+  <img src="docs/screenshots/meetings.png" width="45%"/>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/service.png" width="45%"/>
+  <img src="docs/screenshots/DB-editor.png" width="45%"/>
+</p>
+
 ## Tech Stack
 
 - Python
