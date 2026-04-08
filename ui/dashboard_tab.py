@@ -2,7 +2,66 @@ import customtkinter as ctk
 from tkinter import ttk
 from datetime import date, timedelta
 
-from ui.statuses import STATUS_OVERDUE, STATUS_TODAY, STATUS_7_DAYS
+from ui.statuses import STATUS_OVERDUE, STATUS_TODAY, STATUS_7_DAYS, normalize_language
+
+
+TRANSLATIONS = {
+    "ru": {
+        "title": "Главная",
+        "subtitle": "Контакты, задачи, встречи и напоминания одним взглядом",
+        "refresh": "🔄 Обновить",
+        "hint": "Двойной клик по строке открывает нужный модуль",
+        "contacts_overdue": "Контакты просрочены",
+        "contacts_today": "Контакты сегодня",
+        "tasks_overdue": "Задачи просрочены",
+        "meetings_soon": "Встречи ≤ 9 дней",
+        "birthdays_today": "ДР сегодня",
+        "card_overdue_contacts": "🔴 Просроченные контакты",
+        "card_today_contacts": "🟡 Контакты на сегодня",
+        "card_tasks_focus": "🟥 Задачи: фокус",
+        "card_meetings": "🟣 Встречи: планировать",
+        "card_birthdays": "🎂 Ближайшие дни рождения",
+        "card_week_contacts": "🟢 Контакты на 7 дней",
+        "col_object": "Объект",
+        "col_date": "Дата",
+        "col_details": "Детали",
+        "meeting_fallback": "Встреча",
+        "tab_interactions": "Контакты",
+        "tab_tasks": "Задачи",
+        "tab_meetings": "Встречи",
+        "tab_reminders": "Напоминания",
+    },
+    "en": {
+        "title": "Home",
+        "subtitle": "Contacts, tasks, meetings, and reminders at a glance",
+        "refresh": "🔄 Refresh",
+        "hint": "Double-click a row to open the corresponding module",
+        "contacts_overdue": "Overdue contacts",
+        "contacts_today": "Contacts today",
+        "tasks_overdue": "Overdue tasks",
+        "meetings_soon": "Meetings ≤ 9 days",
+        "birthdays_today": "Birthdays today",
+        "card_overdue_contacts": "🔴 Overdue contacts",
+        "card_today_contacts": "🟡 Contacts for today",
+        "card_tasks_focus": "🟥 Tasks: focus",
+        "card_meetings": "🟣 Meetings: plan",
+        "card_birthdays": "🎂 Upcoming birthdays",
+        "card_week_contacts": "🟢 Contacts for 7 days",
+        "col_object": "Item",
+        "col_date": "Date",
+        "col_details": "Details",
+        "meeting_fallback": "Meeting",
+        "tab_interactions": "Interactions",
+        "tab_tasks": "Tasks",
+        "tab_meetings": "Meetings",
+        "tab_reminders": "Reminders",
+    },
+}
+
+TYPE_TRANSLATIONS = {
+    "ru": {"Звонок": "Звонок", "Встреча": "Встреча"},
+    "en": {"Звонок": "Call", "Встреча": "Meeting"},
+}
 
 from services.person_service import PersonService
 from services.interaction_service import InteractionService
@@ -15,6 +74,34 @@ except Exception:
 
 
 class DashboardTab(ctk.CTkFrame):
+    def _get_current_language(self):
+        root = self.winfo_toplevel()
+        return normalize_language(getattr(root, "current_language", "ru"))
+
+    @property
+    def current_language(self):
+        return self._get_current_language()
+
+    def tr(self, key: str, **kwargs):
+        text = TRANSLATIONS.get(self.current_language, TRANSLATIONS["ru"]).get(key, key)
+        if kwargs:
+            return text.format(**kwargs)
+        return text
+
+    def translate_type(self, value: str | None):
+        if not value:
+            return ""
+        return TYPE_TRANSLATIONS.get(self.current_language, TYPE_TRANSLATIONS["ru"]).get(value, value)
+
+    def _tab_title(self, key: str):
+        root = self.winfo_toplevel()
+        if hasattr(root, "tr"):
+            try:
+                return root.tr(key)
+            except Exception:
+                pass
+        return self.tr(key)
+
     def __init__(
         self,
         parent,
@@ -39,26 +126,26 @@ class DashboardTab(ctk.CTkFrame):
 
         self.title_label = ctk.CTkLabel(
             self.top_frame,
-            text="Главная",
+            text=self.tr("title"),
             font=ctk.CTkFont(size=26, weight="bold"),
         )
         self.title_label.pack(side="left", padx=16, pady=14)
 
         self.subtitle_label = ctk.CTkLabel(
             self.top_frame,
-            text="Контакты, задачи, встречи и напоминания одним взглядом",
+            text=self.tr("subtitle"),
             font=ctk.CTkFont(size=14),
             text_color=("gray35", "gray70"),
         )
         self.subtitle_label.pack(side="left", padx=(0, 10), pady=14)
 
-        ctk.CTkButton(self.top_frame, text="🔄 Обновить", width=150, command=self.refresh).pack(
+        ctk.CTkButton(self.top_frame, text=self.tr("refresh"), width=150, command=self.refresh).pack(
             side="right", padx=12, pady=12
         )
 
         self.hint_label = ctk.CTkLabel(
             self,
-            text="Двойной клик по строке открывает нужный модуль",
+            text=self.tr("hint"),
             font=ctk.CTkFont(size=13),
             text_color=("gray35", "gray70"),
         )
@@ -69,11 +156,11 @@ class DashboardTab(ctk.CTkFrame):
         for i in range(5):
             self.counters_frame.grid_columnconfigure(i, weight=1)
 
-        self.counter_contacts_overdue = self._create_counter(self.counters_frame, 0, "🔴", "Контакты просрочены")
-        self.counter_contacts_today = self._create_counter(self.counters_frame, 1, "🟡", "Контакты сегодня")
-        self.counter_tasks_overdue = self._create_counter(self.counters_frame, 2, "🟥", "Задачи просрочены")
-        self.counter_meetings = self._create_counter(self.counters_frame, 3, "🟣", "Встречи ≤ 9 дней")
-        self.counter_birthdays = self._create_counter(self.counters_frame, 4, "🎂", "ДР сегодня")
+        self.counter_contacts_overdue = self._create_counter(self.counters_frame, 0, "🔴", self.tr("contacts_overdue"))
+        self.counter_contacts_today = self._create_counter(self.counters_frame, 1, "🟡", self.tr("contacts_today"))
+        self.counter_tasks_overdue = self._create_counter(self.counters_frame, 2, "🟥", self.tr("tasks_overdue"))
+        self.counter_meetings = self._create_counter(self.counters_frame, 3, "🟣", self.tr("meetings_soon"))
+        self.counter_birthdays = self._create_counter(self.counters_frame, 4, "🎂", self.tr("birthdays_today"))
 
         self.cards_host = ctk.CTkFrame(self, fg_color="transparent")
         self.cards_host.pack(fill="both", expand=True, padx=10, pady=(0, 10))
@@ -82,12 +169,12 @@ class DashboardTab(ctk.CTkFrame):
         for row in range(2):
             self.cards_host.grid_rowconfigure(row, weight=1)
 
-        self.card_contacts_overdue = self._create_card(self.cards_host, "🔴 Просроченные контакты")
-        self.card_contacts_today = self._create_card(self.cards_host, "🟡 Контакты на сегодня")
-        self.card_tasks_focus = self._create_card(self.cards_host, "🟥 Задачи: фокус")
-        self.card_meetings = self._create_card(self.cards_host, "🟣 Встречи: планировать")
-        self.card_birthdays = self._create_card(self.cards_host, "🎂 Ближайшие дни рождения")
-        self.card_contacts_week = self._create_card(self.cards_host, "🟢 Контакты на 7 дней")
+        self.card_contacts_overdue = self._create_card(self.cards_host, self.tr("card_overdue_contacts"))
+        self.card_contacts_today = self._create_card(self.cards_host, self.tr("card_today_contacts"))
+        self.card_tasks_focus = self._create_card(self.cards_host, self.tr("card_tasks_focus"))
+        self.card_meetings = self._create_card(self.cards_host, self.tr("card_meetings"))
+        self.card_birthdays = self._create_card(self.cards_host, self.tr("card_birthdays"))
+        self.card_contacts_week = self._create_card(self.cards_host, self.tr("card_week_contacts"))
 
         self.card_contacts_overdue["frame"].grid(row=0, column=0, sticky="nsew", padx=(0, 6), pady=(0, 6))
         self.card_contacts_today["frame"].grid(row=0, column=1, sticky="nsew", padx=6, pady=(0, 6))
@@ -97,12 +184,12 @@ class DashboardTab(ctk.CTkFrame):
         self.card_birthdays["frame"].grid(row=1, column=1, sticky="nsew", padx=6, pady=(6, 0))
         self.card_contacts_week["frame"].grid(row=1, column=2, sticky="nsew", padx=(6, 0), pady=(6, 0))
 
-        self.card_contacts_overdue["tree"].bind("<Double-1>", lambda e: self._open_tab("Контакты"))
-        self.card_contacts_today["tree"].bind("<Double-1>", lambda e: self._open_tab("Контакты"))
-        self.card_contacts_week["tree"].bind("<Double-1>", lambda e: self._open_tab("Контакты"))
-        self.card_tasks_focus["tree"].bind("<Double-1>", lambda e: self._open_tab("Задачи"))
-        self.card_meetings["tree"].bind("<Double-1>", lambda e: self._open_tab("Встречи"))
-        self.card_birthdays["tree"].bind("<Double-1>", lambda e: self._open_tab("Напоминания"))
+        self.card_contacts_overdue["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_interactions"))
+        self.card_contacts_today["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_interactions"))
+        self.card_contacts_week["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_interactions"))
+        self.card_tasks_focus["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_tasks"))
+        self.card_meetings["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_meetings"))
+        self.card_birthdays["tree"].bind("<Double-1>", lambda e: self._open_tab("tab_reminders"))
 
     def _create_counter(self, parent, column, emoji, title):
         box = ctk.CTkFrame(parent, corner_radius=12)
@@ -140,9 +227,9 @@ class DashboardTab(ctk.CTkFrame):
 
         columns = ("main", "date", "extra")
         tree = ttk.Treeview(table_container, columns=columns, show="headings", height=9)
-        tree.heading("main", text="Объект")
-        tree.heading("date", text="Дата")
-        tree.heading("extra", text="Детали")
+        tree.heading("main", text=self.tr("col_object"))
+        tree.heading("date", text=self.tr("col_date"))
+        tree.heading("extra", text=self.tr("col_details"))
 
         tree.column("main", width=230)
         tree.column("date", width=95, anchor="center")
@@ -156,11 +243,11 @@ class DashboardTab(ctk.CTkFrame):
 
         return {"frame": frame, "tree": tree}
 
-    def _open_tab(self, tab_name: str):
+    def _open_tab(self, tab_key: str):
         root = self.winfo_toplevel()
         if hasattr(root, "tabview"):
             try:
-                root.tabview.set(tab_name)
+                root.tabview.set(self._tab_title(tab_key))
             except Exception:
                 pass
 
@@ -290,7 +377,7 @@ class DashboardTab(ctk.CTkFrame):
 
             person_name = person.fio if person else f"[ID {interaction.person_id}]"
             next_date = interaction.next_date.strftime("%d.%m.%Y") if interaction.next_date else ""
-            extra = f"{interaction.interaction_type or ''} | {responsible or '-'}"
+            extra = f"{self.translate_type(interaction.interaction_type) or ''} | {responsible or '-'}"
 
             tree.insert("", "end", values=(person_name, next_date, extra))
 
@@ -335,7 +422,7 @@ class DashboardTab(ctk.CTkFrame):
             elif getattr(meeting, "subject", ""):
                 person_name = meeting.subject
             else:
-                person_name = "Встреча"
+                person_name = self.tr("meeting_fallback")
 
             deadline = ""
             if getattr(meeting, "start_datetime", None):

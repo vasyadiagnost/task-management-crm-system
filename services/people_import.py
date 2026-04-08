@@ -17,130 +17,259 @@ from models.app_setting import AppSetting
 EXPORT_DIR = "exports"
 
 
-IMPORT_HEADERS = [
-    "ФИО",
-    "Должность",
-    "Круг",
-    "Уровень",
-    "Подкатегория",
-    "Столбец 1",
-    "Отслеживать звонки?",
-    "пол",
-    "Дата рождения",
-    "Категория подарка",
-    "Столбец1",
-    "День рождения сегодня?",
-    "Периодичность звонка",
-    "Дата рождения жены",
-    "Дата рождения детей",
-    "Служил",
-    "Проф праздник ",
-    "Столбец2",
-    "ПРОФ ПРАЗДНИК?",
-    "Религия",
-    "Хобби",
-    "Телефон/Контактное лицо",
-    "Аллергия/вкусы/предпочтения в еде",
-    "С кем лучше не пересекать",
-    "Что уже дарили ",
-    "Последняя встреча ",
-    "Дата следующей встречи",
-    "Цель встречи ",
-    "Пора встретиться?",
-    "Последний звонок",
-    "Дата следующего звонка",
-    "Цель звонка",
-    "Пора позвонить",
-]
+IMPORT_TEMPLATE_CONFIG = {
+    "ru": {
+        "sheet_title": "Импорт людей",
+        "file_name": "people_import_template.xlsx",
+        "headers": [
+            "ФИО",
+            "Должность",
+            "Круг",
+            "Уровень",
+            "Подкатегория",
+            "Столбец 1",
+            "Отслеживать звонки?",
+            "пол",
+            "Дата рождения",
+            "Категория подарка",
+            "Столбец1",
+            "День рождения сегодня?",
+            "Периодичность звонка",
+            "Дата рождения жены",
+            "Дата рождения детей",
+            "Служил",
+            "Проф праздник ",
+            "Столбец2",
+            "ПРОФ ПРАЗДНИК?",
+            "Религия",
+            "Хобби",
+            "Телефон/Контактное лицо",
+            "Аллергия/вкусы/предпочтения в еде",
+            "С кем лучше не пересекать",
+            "Что уже дарили ",
+            "Последняя встреча ",
+            "Дата следующей встречи",
+            "Цель встречи ",
+            "Пора встретиться?",
+            "Последний звонок",
+            "Дата следующего звонка",
+            "Цель звонка",
+            "Пора позвонить",
+        ],
+        "sample_row": [
+            "Иванов Иван Иванович",
+            "начальник отдела",
+            "1",
+            "регион",
+            "основной контакт",
+            "Шафоростов",
+            "Да",
+            "М",
+            "04.04.1990",
+            "стандарт",
+            "",
+            "",
+            "14",
+            "",
+            "",
+            "Нет",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "+7 900 000-00-00",
+            "",
+            "",
+            "",
+            "01.03.2026",
+            "",
+            "поддержание контакта",
+            "Да",
+            "05.03.2026",
+            "",
+            "уточнить позицию",
+            "Да",
+        ],
+    },
+    "en": {
+        "sheet_title": "People import",
+        "file_name": "people_import_template_en.xlsx",
+        "headers": [
+            "Full name",
+            "Position",
+            "Circle",
+            "Level",
+            "Subcategory",
+            "Column 1",
+            "Track calls?",
+            "Gender",
+            "Birthday",
+            "Gift category",
+            "Column1",
+            "Birthday today?",
+            "Call periodicity",
+            "Spouse birthday",
+            "Children birthdays",
+            "Served",
+            "Professional holiday",
+            "Column2",
+            "PROFESSIONAL HOLIDAY?",
+            "Religion",
+            "Hobby",
+            "Phone/Contact person",
+            "Allergy/tastes/food preferences",
+            "Who should not be crossed with",
+            "What has already been gifted",
+            "Last meeting",
+            "Next meeting date",
+            "Meeting purpose",
+            "Time to meet?",
+            "Last call",
+            "Next call date",
+            "Call purpose",
+            "Time to call",
+        ],
+        "sample_row": [
+            "Ivanov Ivan Ivanovich",
+            "department head",
+            "1",
+            "regional",
+            "primary contact",
+            "Shaforostov",
+            "Yes",
+            "M",
+            "04.04.1990",
+            "standard",
+            "",
+            "",
+            "14",
+            "",
+            "",
+            "No",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "+7 900 000-00-00",
+            "",
+            "",
+            "",
+            "01.03.2026",
+            "",
+            "relationship maintenance",
+            "Yes",
+            "05.03.2026",
+            "",
+            "clarify position",
+            "Yes",
+        ],
+    },
+}
+
+
+IMPORT_HEADERS = IMPORT_TEMPLATE_CONFIG["ru"]["headers"]
 
 
 HEADER_TO_ATTR = {
     "ФИО": "fio",
+    "Full name": "fio",
     "Должность": "position",
+    "Position": "position",
     "Круг": "circle",
+    "Circle": "circle",
     "Уровень": "level",
+    "Level": "level",
     "Подкатегория": "subcategory",
+    "Subcategory": "subcategory",
     "Столбец 1": "legacy_column_1",
+    "Column 1": "legacy_column_1",
     "Отслеживать звонки?": "track_calls",
+    "Track calls?": "track_calls",
     "пол": "gender",
+    "Gender": "gender",
     "Дата рождения": "birthday",
+    "Birthday": "birthday",
     "Категория подарка": "gift_category",
+    "Gift category": "gift_category",
     "Столбец1": "legacy_column1",
+    "Column1": "legacy_column1",
     "День рождения сегодня?": "birthday_today_flag",
+    "Birthday today?": "birthday_today_flag",
     "Периодичность звонка": "call_periodicity_legacy",
+    "Call periodicity": "call_periodicity_legacy",
     "Дата рождения жены": "spouse_birthday",
+    "Spouse birthday": "spouse_birthday",
     "Дата рождения детей": "children_birthdays",
+    "Children birthdays": "children_birthdays",
     "Служил": "served",
+    "Served": "served",
     "Проф праздник ": "prof_holiday",
+    "Professional holiday": "prof_holiday",
     "Столбец2": "legacy_column2",
+    "Column2": "legacy_column2",
     "ПРОФ ПРАЗДНИК?": "prof_holiday_flag",
+    "PROFESSIONAL HOLIDAY?": "prof_holiday_flag",
     "Религия": "religion",
+    "Religion": "religion",
     "Хобби": "hobby",
+    "Hobby": "hobby",
     "Телефон/Контактное лицо": "phone_contact_person",
+    "Phone/Contact person": "phone_contact_person",
     "Аллергия/вкусы/предпочтения в еде": "food_preferences",
+    "Allergy/tastes/food preferences": "food_preferences",
     "С кем лучше не пересекать": "avoid_with",
+    "Who should not be crossed with": "avoid_with",
     "Что уже дарили ": "gifts_already_given",
+    "What has already been gifted": "gifts_already_given",
     "Последняя встреча ": "last_meeting_legacy",
+    "Last meeting": "last_meeting_legacy",
     "Дата следующей встречи": "next_meeting_legacy",
+    "Next meeting date": "next_meeting_legacy",
     "Цель встречи ": "meeting_purpose_legacy",
+    "Meeting purpose": "meeting_purpose_legacy",
     "Пора встретиться?": "need_meeting_flag",
+    "Time to meet?": "need_meeting_flag",
     "Последний звонок": "last_call_legacy",
+    "Last call": "last_call_legacy",
     "Дата следующего звонка": "next_call_legacy",
+    "Next call date": "next_call_legacy",
     "Цель звонка": "call_purpose_legacy",
+    "Call purpose": "call_purpose_legacy",
     "Пора позвонить": "need_call_flag",
+    "Time to call": "need_call_flag",
 }
+
+
+def normalize_language(language: str | None) -> str:
+    return "en" if str(language or "ru").strip().lower() == "en" else "ru"
 
 
 def ensure_export_dir() -> None:
     os.makedirs(EXPORT_DIR, exist_ok=True)
 
 
-def create_people_import_template() -> str:
+def create_people_import_template(*args: Any, language: str = "ru", **kwargs: Any) -> str:
     ensure_export_dir()
+
+    if args and isinstance(args[0], str) and "language" not in kwargs:
+        language = args[0]
+
+    if "lang" in kwargs and not args:
+        language = kwargs.get("lang")
+
+    lang = normalize_language(language)
+    config = IMPORT_TEMPLATE_CONFIG[lang]
 
     wb = Workbook()
     ws = wb.active
-    ws.title = "Импорт людей"
+    ws.title = config["sheet_title"]
 
-    ws.append(IMPORT_HEADERS)
+    ws.append(config["headers"])
+    ws.append(config["sample_row"])
 
-    ws.append([
-        "Иванов Иван Иванович",
-        "начальник отдела",
-        "1",
-        "регион",
-        "основной контакт",
-        "Шафоростов",
-        "Да",
-        "М",
-        "04.04.1990",
-        "стандарт",
-        "",
-        "",
-        "14",
-        "",
-        "",
-        "Нет",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "+7 900 000-00-00",
-        "",
-        "",
-        "",
-        "01.03.2026",
-        "",
-        "поддержание контакта",
-        "Да",
-        "05.03.2026",
-        "",
-        "уточнить позицию",
-        "Да",
-    ])
-
-    output_path = os.path.join(EXPORT_DIR, "people_import_template.xlsx")
+    output_path = os.path.join(EXPORT_DIR, config["file_name"])
     wb.save(output_path)
     return output_path
 
@@ -257,53 +386,21 @@ def deactivate_previous_active_contacts(session, person_id: int, interaction_typ
         query = query.filter(Interaction.interaction_type == interaction_type)
 
     old_items = query.all()
-
     for item in old_items:
         item.is_active = 0
-        item.completed_at = datetime.now()
 
 
-def ensure_responsible_exists(session, responsible_name: str) -> None:
-    value = (responsible_name or "").strip()
-    if not value:
-        return
-
-    exists = session.query(Responsible).filter(Responsible.name == value).first()
-    if not exists:
-        session.add(Responsible(name=value))
-        session.flush()
-
-
-def create_legacy_interaction_if_needed(
+def create_legacy_interaction(
     session,
     person: Person,
     interaction_type: str,
-    last_date_raw: Any,
-    next_date_raw: Any,
-    purpose_raw: str,
-    result_text: str,
-    comment_text: str,
-) -> bool:
-    interaction_date = parse_date_flexible(last_date_raw)
+    interaction_date,
+    next_date,
+    purpose: str,
+    responsible: str,
+):
     if not interaction_date:
         return False
-
-    existing = (
-        session.query(Interaction)
-        .filter(
-            Interaction.person_id == person.id,
-            Interaction.interaction_type == interaction_type,
-            Interaction.interaction_date == interaction_date,
-        )
-        .first()
-    )
-    if existing:
-        return False
-
-    next_date = parse_date_flexible(next_date_raw)
-    if not next_date:
-        period_days = get_circle_period_days(session, person.circle)
-        next_date = interaction_date + timedelta(days=period_days) if period_days > 0 else None
 
     deactivate_previous_active_contacts(session, person.id, interaction_type)
 
@@ -312,139 +409,169 @@ def create_legacy_interaction_if_needed(
         interaction_type=interaction_type,
         interaction_date=interaction_date,
         next_date=next_date,
-        responsible=person.responsible or "",
-        purpose=(purpose_raw or "").strip(),
-        result=result_text,
-        comment=comment_text,
+        purpose=(purpose or "").strip(),
+        result="",
+        responsible=(responsible or person.responsible or "").strip(),
         is_active=1,
-        completed_at=None,
     )
     session.add(interaction)
     return True
 
 
-def resolve_responsible_from_row(row, header_indexes: dict[str, int]) -> str:
-    """
-    В текущем шаблоне ответственный физически лежит в столбце 'Столбец 1'
-    (это бывший column F исходной таблицы).
-    Если позже появится явный столбец 'Ответственный', он тоже можно будет поддержать.
-    """
-    if "Ответственный" in header_indexes:
-        return stringify_cell(row[header_indexes["Ответственный"]])
-
-    if "Столбец 1" in header_indexes:
-        return stringify_cell(row[header_indexes["Столбец 1"]])
-
-    return ""
-
-
-def import_people_from_excel(file_path: str) -> dict:
-    wb = load_workbook(file_path, data_only=True)
+def import_people_from_excel(file_path: str) -> dict[str, int]:
+    wb = load_workbook(file_path)
     ws = wb.active
 
-    headers = [normalize_header(cell.value) for cell in ws[1]]
-    header_indexes = {header: idx for idx, header in enumerate(headers) if header}
+    if ws.max_row < 2:
+        return {"created": 0, "updated": 0, "skipped": 0, "interactions_created": 0}
 
-    required_headers = ["ФИО"]
-    for req in required_headers:
-        if req not in header_indexes:
-            raise ValueError(f"В файле отсутствует обязательный столбец: {req}")
+    headers = [normalize_header(cell.value) for cell in ws[1]]
+    column_map: dict[int, str] = {}
+
+    for index, header in enumerate(headers):
+        attr_name = HEADER_TO_ATTR.get(header)
+        if attr_name:
+            column_map[index] = attr_name
 
     session = get_session()
 
-    created_count = 0
-    updated_count = 0
-    skipped_count = 0
+    created = 0
+    updated = 0
+    skipped = 0
     interactions_created = 0
-    responsibles_created = 0
 
-    existing_responsibles_before = {
-        x.name.strip()
-        for x in session.query(Responsible).all()
-        if (x.name or "").strip()
-    }
+    try:
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            row_data = {
+                attr: stringify_cell(row[index]) if index < len(row) else ""
+                for index, attr in column_map.items()
+            }
 
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        fio = stringify_cell(row[header_indexes["ФИО"]]) if "ФИО" in header_indexes else ""
-        if not fio:
-            skipped_count += 1
-            continue
-
-        person = session.query(Person).filter(Person.fio == fio).first()
-        is_new = person is None
-
-        if is_new:
-            person = Person(fio=fio)
-            session.add(person)
-
-        for header, attr_name in HEADER_TO_ATTR.items():
-            if header not in header_indexes:
+            fio = row_data.get("fio", "").strip()
+            if not fio:
+                skipped += 1
                 continue
 
-            value = row[header_indexes[header]]
-
-            if attr_name == "birthday":
-                setattr(person, attr_name, parse_date_flexible(value))
+            person = session.query(Person).filter(Person.fio == fio).first()
+            is_new = person is None
+            if is_new:
+                person = Person(fio=fio)
+                session.add(person)
+                session.flush()
+                created += 1
             else:
-                text_value = stringify_cell(value)
+                updated += 1
 
-                if attr_name == "track_calls":
-                    text_value = normalize_yes_no(text_value)
+            responsible_name = row_data.get("legacy_column_1", "").strip()
+            if responsible_name:
+                existing_responsible = session.query(Responsible).filter(Responsible.name == responsible_name).first()
+                if not existing_responsible:
+                    session.add(Responsible(name=responsible_name))
+                    session.flush()
+                person.responsible = responsible_name
 
-                setattr(person, attr_name, text_value)
+            track_calls = normalize_yes_no(row_data.get("track_calls", ""))
 
-        # Ответственный берём из column F / "Столбец 1"
-        responsible_value = resolve_responsible_from_row(row, header_indexes).strip()
-        if responsible_value:
-            person.responsible = responsible_value
-            ensure_responsible_exists(session, responsible_value)
+            person.position = row_data.get("position", "").strip()
+            person.circle = row_data.get("circle", "").strip()
+            person.level = row_data.get("level", "").strip()
+            person.subcategory = row_data.get("subcategory", "").strip()
+            person.legacy_column_1 = row_data.get("legacy_column_1", "").strip()
+            person.track_calls = track_calls
+            person.gender = row_data.get("gender", "").strip()
+            person.birthday = parse_date_flexible(row_data.get("birthday", ""))
+            person.gift_category = row_data.get("gift_category", "").strip()
+            person.legacy_column1 = row_data.get("legacy_column1", "").strip()
+            person.birthday_today_flag = row_data.get("birthday_today_flag", "").strip()
+            person.call_periodicity_legacy = row_data.get("call_periodicity_legacy", "").strip()
+            person.spouse_birthday = row_data.get("spouse_birthday", "").strip()
+            person.children_birthdays = row_data.get("children_birthdays", "").strip()
+            person.served = row_data.get("served", "").strip()
+            person.prof_holiday = row_data.get("prof_holiday", "").strip()
+            person.legacy_column2 = row_data.get("legacy_column2", "").strip()
+            person.prof_holiday_flag = row_data.get("prof_holiday_flag", "").strip()
+            person.religion = row_data.get("religion", "").strip()
+            person.hobby = row_data.get("hobby", "").strip()
+            person.phone_contact_person = row_data.get("phone_contact_person", "").strip()
+            person.food_preferences = row_data.get("food_preferences", "").strip()
+            person.avoid_with = row_data.get("avoid_with", "").strip()
+            person.gifts_already_given = row_data.get("gifts_already_given", "").strip()
+            person.last_meeting_legacy = row_data.get("last_meeting_legacy", "").strip()
+            person.next_meeting_legacy = row_data.get("next_meeting_legacy", "").strip()
+            person.meeting_purpose_legacy = row_data.get("meeting_purpose_legacy", "").strip()
+            person.need_meeting_flag = row_data.get("need_meeting_flag", "").strip()
+            person.last_call_legacy = row_data.get("last_call_legacy", "").strip()
+            person.next_call_legacy = row_data.get("next_call_legacy", "").strip()
+            person.call_purpose_legacy = row_data.get("call_purpose_legacy", "").strip()
+            person.need_call_flag = row_data.get("need_call_flag", "").strip()
 
-            if responsible_value not in existing_responsibles_before:
-                existing_responsibles_before.add(responsible_value)
-                responsibles_created += 1
+            if person.circle:
+                existing_circle = session.query(Circle).filter(Circle.name == person.circle).first()
+                if not existing_circle:
+                    period_days = 0
+                    if person.circle == "1":
+                        period_days = 14
+                    elif person.circle == "2":
+                        period_days = 21
+                    elif person.circle == "3":
+                        period_days = 45
+                    elif person.circle.upper() == "VIP":
+                        period_days = 14
+                    session.add(Circle(name=person.circle, contact_period_days=period_days))
+                    session.flush()
 
-        if person.phone_contact_person and not person.phone:
-            person.phone = person.phone_contact_person
+            session.flush()
 
-        if is_new:
-            created_count += 1
-        else:
-            updated_count += 1
+            meeting_date = parse_date_flexible(row_data.get("last_meeting_legacy", ""))
+            next_meeting_date = parse_date_flexible(row_data.get("next_meeting_legacy", ""))
+            meeting_purpose = row_data.get("meeting_purpose_legacy", "")
 
-        session.flush()
+            if meeting_date:
+                if not next_meeting_date:
+                    period_days = get_circle_period_days(session, person.circle or "")
+                    if period_days > 0:
+                        next_meeting_date = meeting_date + timedelta(days=period_days)
+                if create_legacy_interaction(
+                    session=session,
+                    person=person,
+                    interaction_type="Встреча",
+                    interaction_date=meeting_date,
+                    next_date=next_meeting_date,
+                    purpose=meeting_purpose,
+                    responsible=person.responsible or responsible_name,
+                ):
+                    interactions_created += 1
 
-        if create_legacy_interaction_if_needed(
-            session=session,
-            person=person,
-            interaction_type="Встреча",
-            last_date_raw=person.last_meeting_legacy,
-            next_date_raw=person.next_meeting_legacy,
-            purpose_raw=person.meeting_purpose_legacy,
-            result_text="Импортировано из исходной базы (последняя встреча)",
-            comment_text="Создано автоматически при импорте людей из Excel",
-        ):
-            interactions_created += 1
+            if is_track_calls_enabled(track_calls):
+                call_date = parse_date_flexible(row_data.get("last_call_legacy", ""))
+                next_call_date = parse_date_flexible(row_data.get("next_call_legacy", ""))
+                call_purpose = row_data.get("call_purpose_legacy", "")
 
-        if is_track_calls_enabled(person.track_calls):
-            if create_legacy_interaction_if_needed(
-                session=session,
-                person=person,
-                interaction_type="Звонок",
-                last_date_raw=person.last_call_legacy,
-                next_date_raw=person.next_call_legacy,
-                purpose_raw=person.call_purpose_legacy,
-                result_text="Импортировано из исходной базы (последний звонок)",
-                comment_text="Создано автоматически при импорте людей из Excel",
-            ):
-                interactions_created += 1
+                if call_date:
+                    if not next_call_date:
+                        period_days = get_circle_period_days(session, person.circle or "")
+                        if period_days > 0:
+                            next_call_date = call_date + timedelta(days=period_days)
+                    if create_legacy_interaction(
+                        session=session,
+                        person=person,
+                        interaction_type="Звонок",
+                        interaction_date=call_date,
+                        next_date=next_call_date,
+                        purpose=call_purpose,
+                        responsible=person.responsible or responsible_name,
+                    ):
+                        interactions_created += 1
 
-    session.commit()
-    session.close()
-
-    return {
-        "created": created_count,
-        "updated": updated_count,
-        "skipped": skipped_count,
-        "interactions_created": interactions_created,
-        "responsibles_created": responsibles_created,
-    }
+        session.commit()
+        return {
+            "created": created,
+            "updated": updated,
+            "skipped": skipped,
+            "interactions_created": interactions_created,
+        }
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
