@@ -1,75 +1,45 @@
-# 🧠 Task Management CRM System
+# Task Management CRM System
 
-System for managing tasks and interactions in a high-load operational environment.
+Desktop CRM / task registry system for managing contacts, interactions, meetings, reminders, and operational tasks.
 
----
+## Overview
 
-## 🚩 Problem
+This project is a desktop Python application built for structured relationship management and task control in a real operational environment.
 
-In large organizations, task management often suffers from:
+The system combines:
+- contacts database
+- interaction tracking
+- meetings registry
+- task control
+- reminders
+- dashboard and filtering tools
 
-- lack of transparency  
-- lost or forgotten tasks  
-- manual coordination between teams  
-- no single source of truth  
+## Key Features
 
-This leads to delays, inefficiency, and loss of control.
+- Persons registry
+- Interactions management
+- Meetings management
+- Task registry
+- Reminder module
+- Reference dictionaries
+- Status tracking and filters
+- Dashboard with counters and summaries
+- SQLite database
+- Desktop UI based on tkinter / customtkinter
 
----
+## Tech Stack
 
-## 💡 Solution
+- Python
+- customtkinter / tkinter
+- SQLite
+- SQLAlchemy
 
-Designed and implemented a custom CRM system to:
+## Project Structure
 
-- track tasks and interactions  
-- manage task lifecycle and statuses  
-- store full history of execution  
-- provide visibility and accountability  
-
----
-
-## ⚙️ Features
-
-- task tracking system  
-- status-based workflow  
-- interaction history  
-- filtering and prioritization  
-- dashboard with key metrics  
-- export and reporting  
-
----
-
-## 🏗 Architecture
-
-- Python (desktop application)  
-- SQLite (data storage)  
-- modular structure (UI, services, models)  
-
-More details: see `/docs/architecture.md`
-
----
-
-## 📊 Results
-
-- reduced task processing time to 1–2 days  
-- eliminated task loss  
-- improved transparency across processes  
-- centralized task management  
-
----
-
-## 📸 Screenshots
-
-*(will be added later)*
-
----
-
-## 📚 Process Transformation
-
-See `/docs/process.md` for full description of AS-IS → TO-BE transformation.
-
----
-
-## 👤 Author
-
-Project / Operations Manager with focus on process optimization and automation.
+```text
+dialogs/     - modal windows and edit forms
+models/      - data models
+services/    - business logic and data operations
+ui/          - application tabs and interface
+database.py  - database initialization
+main.py      - application entry point
