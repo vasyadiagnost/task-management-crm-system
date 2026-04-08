@@ -2,7 +2,7 @@
 
 ## Overview
 
-The system is a desktop CRM application designed to manage tasks and interactions in an operational environment.
+The system is a desktop CRM application designed to manage tasks and interactions in an operational environment. System works offline - no internet needed, no subscription or any other payments, complete free.
 
 ---
 
