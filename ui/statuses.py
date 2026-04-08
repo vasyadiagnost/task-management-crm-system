@@ -1,0 +1,15 @@
+STATUS_ALL = "Все"
+STATUS_OVERDUE = "Просрочен"
+STATUS_TODAY = "Сегодня"
+STATUS_7_DAYS = "7 дней"
+STATUS_PLANNED = "Запланирован"
+STATUS_NO_DATE = "Без даты"
+
+INTERACTION_STATUS_VALUES = [
+    STATUS_ALL,
+    STATUS_OVERDUE,
+    STATUS_TODAY,
+    STATUS_7_DAYS,
+    STATUS_PLANNED,
+    STATUS_NO_DATE,
+]
